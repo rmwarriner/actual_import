@@ -1,0 +1,184 @@
+# actual-budget.yaml
+# ====================
+# Configuration for actual-budget-import.py
+#
+# Edit this file to add new accounts, categories, or payee overrides.
+# The import script is not meant to be edited directly — all mappings live here.
+#
+# Payee overrides are checked first (in order), before category_map.
+# Patterns are case-insensitive Python regex strings.
+# The first matching override wins.
+
+# ---------------------------------------------------------------------------
+# Payment accounts
+# Maps Actual Budget account names → hledger asset/liability accounts
+# ---------------------------------------------------------------------------
+payment_accounts:
+  Spending Account:               assets:checking:spending
+  Chase Freedom Flex:             liabilities:credit:chase-freedom-flex
+  Chase Sapphire Preferred:       liabilities:credit:chase-sapphire-preferred
+  Discover Card:                  liabilities:credit:discover
+  Savings Account:                assets:savings:main
+  Education Fund:                 assets:savings:education-fund
+  Amazon Purchases (Clearing):    assets:clearing:amazon
+  Apple Purchases (Clearing):     assets:clearing:apple
+
+# ---------------------------------------------------------------------------
+# Category map
+# Maps Actual Budget category names → hledger accounts
+# ---------------------------------------------------------------------------
+category_map:
+  # Income
+  Paycheck:                       income:employment:bnsf:paycheck
+  Bonuses & Backpay:              income:employment:bnsf:bonus
+  Other Income:                   income:other
+  Starting Balances:              equity:opening-balances
+  Savings Disbursement:           assets:savings:main
+
+  # Bills: Housing
+  Mortgage:                       expenses:bills:housing:mortgage
+  Electric:                       expenses:bills:housing:utilities:electric
+  Natural Gas:                    expenses:bills:housing:utilities:gas
+  Water & Waste:                  expenses:bills:housing:utilities:water
+  Internet:                       expenses:bills:housing:utilities:internet
+
+  # Bills: Insurance
+  Auto Insurance:                 expenses:bills:insurance:auto
+  Life Insurance:                 expenses:bills:insurance:life
+
+  # Bills: Debt
+  Auto Lease:                     expenses:bills:debt:auto-lease
+  Student Loan Payment:           expenses:bills:debt:student-loan
+
+  # Bills: Services
+  Digital Services:               expenses:bills:subscriptions:digital
+  Storage & Warehousing:          expenses:bills:storage
+  Cell Phone:                     expenses:bills:phone:cell
+  Financial Fees:                 expenses:bills:financial-fees
+  E-Commerce Services:            expenses:bills:subscriptions:digital
+
+  # Planned
+  Groceries:                      expenses:planned:groceries
+  Groceries & Household:          expenses:planned:groceries
+  Gas & Fuel:                     expenses:planned:auto:fuel
+  Auto Maintenance:               expenses:planned:auto:maintenance
+  Medical - Procedures:           expenses:planned:medical:procedures
+  Medical - Office Visits:        expenses:planned:medical:office-visits
+  Prescriptions:                  expenses:planned:medical:prescriptions
+  Prescriptions & OTC:            expenses:planned:medical:prescriptions
+  Pet Food & Supplies:            expenses:planned:pets:food-supplies
+  Pet Medication:                 expenses:planned:pets:medication
+  Pets - Grooming:                expenses:planned:pets:grooming
+  Veterinary Services:            expenses:planned:pets:veterinary
+  Home & Yard Maintenance:        expenses:planned:home:maintenance
+  Home Maintenance:               expenses:planned:home:maintenance
+  Home Improvement:               expenses:planned:home:improvement
+  Lawn & Garden Equipment:        expenses:planned:home:lawn-garden
+  Education:                      expenses:planned:education:tuition
+  Tithing-Donations:              expenses:planned:giving:tithing
+  Gifts:                          expenses:planned:gifts
+
+  # Allowances
+  Robert's Allowance:             expenses:family:allowances:robert
+  Katie's Allowance:              expenses:family:allowances:katie
+  Walter's Allowance:             expenses:family:allowances:walter
+
+  # Discretionary
+  Dining & Restaurants:           expenses:discretionary:dining
+  Entertainment & Gaming:         expenses:discretionary:entertainment
+  Hobbies:                        expenses:discretionary:hobbies
+  Clothing & Shoes:               expenses:discretionary:clothing
+  Personal Care:                  expenses:discretionary:personal-care
+  Housewares:                     expenses:discretionary:housewares
+  Household Supplies:             expenses:planned:household-supplies
+  Software & Tech:                expenses:discretionary:software-tech
+  Jewelry & Accessories:          expenses:discretionary:clothing
+
+  # Savings
+  Savings Contribution:           assets:savings:main
+  Katie's IRA:                    assets:investments:ira:katie
+
+  # Equipment
+  Furniture & Fixtures:           expenses:equipment:furniture
+  Kitchen Appliances:             expenses:equipment:kitchen
+
+  # Legacy / catch-all
+  General Spending:               expenses:discretionary:unclassified
+
+# ---------------------------------------------------------------------------
+# Payee overrides
+# Checked before category_map. First match wins.
+# Each entry has a regex pattern (case-insensitive) and a target account.
+# ---------------------------------------------------------------------------
+payee_overrides:
+  # Dining
+  - pattern: "raising cane|jason.s deli|golden corral|taco bell|panda express|burger king|jersey mike|elsa.s greek|taz indian|v.s coffee|chick.fil.a|whataburger|mcdonald|wendy.s|starbucks|cracker barrel|olive garden|texas roadhouse"
+    account: expenses:discretionary:dining
+
+  # Entertainment: Gaming
+  - pattern: "playstation|xbox|nintendo|steam"
+    account: expenses:discretionary:entertainment:gaming
+
+  # Entertainment: Streaming
+  - pattern: "netflix|paramount"
+    account: expenses:discretionary:entertainment:streaming
+
+  # Personal Care
+  - pattern: "just him|just 4 him|great clips|sport clips"
+    account: expenses:discretionary:personal-care:haircuts
+
+  # Allowances
+  - pattern: "greenlight"
+    account: expenses:family:allowances:walter
+  - pattern: "transfer to paypal"
+    account: expenses:family:allowances:robert
+
+  # Tech subscriptions
+  - pattern: "digitalocean|digital ocean"
+    account: expenses:bills:subscriptions:tech
+  - pattern: "cloudflare"
+    account: expenses:bills:subscriptions:tech
+  - pattern: "wasabi"
+    account: expenses:bills:subscriptions:tech
+  - pattern: "1password"
+    account: expenses:bills:subscriptions:tech
+  - pattern: "quicken"
+    account: expenses:bills:subscriptions:tech
+
+  # Hobbies
+  - pattern: "sodastream"
+    account: expenses:discretionary:hobbies
+
+  # Income
+  - pattern: "veritas"
+    account: income:employment:veritas
+
+# ---------------------------------------------------------------------------
+# Skip payees
+# Internal transfer legs — these rows are never imported.
+# ---------------------------------------------------------------------------
+skip_payees:
+  - Chase Freedom Flex
+  - Chase Sapphire Preferred
+  - Discover Card
+  - Savings Account
+  - Spending Account
+
+#  - Amazon Purchases (Clearing)
+#  - Apple Purchases (Clearing)
+
+# ---------------------------------------------------------------------------
+# Clearing accounts
+# Pass-through accounts whose rows provide child split detail but should
+# never appear as the payment account in a journal entry.
+# ---------------------------------------------------------------------------
+clearing_accounts:
+  - Amazon Purchases (Clearing)
+  - Apple Purchases (Clearing)
+
+# ---------------------------------------------------------------------------
+# Settings
+# ---------------------------------------------------------------------------
+settings:
+  currency: USD
+  default_account: expenses:discretionary:unclassified
