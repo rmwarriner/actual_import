@@ -164,9 +164,6 @@ skip_payees:
   - Savings Account
   - Spending Account
 
-#  - Amazon Purchases (Clearing)
-#  - Apple Purchases (Clearing)
-
 # ---------------------------------------------------------------------------
 # Clearing accounts
 # Pass-through accounts whose rows provide child split detail but should

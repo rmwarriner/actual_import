@@ -146,6 +146,7 @@ def main(argv: list[str] | None = None) -> int:
     print(
         f"Result: {stats['written']} written, {stats['skipped']} skipped, "
         f"{stats['dupes']} duplicates suppressed"
+        + (f", {stats['transfers']} transfers" if stats.get("transfers") else "")
         + (f", {stats['orphans']} orphaned splits" if stats["orphans"] else ""),
         file=sys.stderr,
     )

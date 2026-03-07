@@ -132,3 +132,32 @@ def orphan(parent: dict, partial: dict, currency: str, config: dict) -> str:
         f"    {default}",
         "",
     ])
+
+
+def transfer(primary: dict, secondary: dict, currency: str, config: dict) -> str:
+    """
+    Render a paired transfer as a single balanced hledger transaction.
+
+    The primary row is the outgoing leg (negative amount). The secondary
+    row is the receiving leg and provides the destination account name.
+
+    2026-02-15 Chase Freedom Flex Payment
+        ; ab-id:abc123def456  transfer
+        assets:checking:spending                   -500.00 USD
+        liabilities:credit:chase-freedom-flex
+    """
+    date   = primary["Date"]
+    payee  = primary["Payee"]
+    notes  = primary["Notes"]
+    amount = float(primary["Amount"])
+    from_  = mapping.payment_account(primary["Account"], config)
+    to_    = mapping.payment_account(secondary["Account"], config)
+    fprint = fp_mod.compute(primary)
+
+    return "\n".join([
+        f"{date} {payee}  ; {notes}",
+        f"    ; ab-id:{fprint}  transfer",
+        f"    {from_:<{_ACCT_WIDTH}}  {_fmt(amount, currency)}",
+        f"    {to_}",
+        "",
+    ])

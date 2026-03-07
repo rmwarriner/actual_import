@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "actual-budget-import"
 version = "1.0.0"
 description = "Import Actual Budget CSV exports to hledger journal format"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 dependencies = ["pyyaml>=6.0"]
 
 [project.scripts]
