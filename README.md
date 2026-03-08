@@ -108,3 +108,17 @@ pytest tests/test_splitter.py # single module
 3. `python -m actual_budget_import export.csv -o ../hledger-ledger/2026/2026.journal`
 4. `cd ../hledger-ledger && git add -A && git commit -m "import: $(date +%Y-%m)"`
 5. Query as needed: `hledger -f main.journal bal expenses -M`
+
+
+Running the narrative module:
+# Free -- no API calls at all, dumps raw context JSON
+python -m narrative --no-claude --no-actual
+
+# Free -- includes Actual Budget fetch, dumps context JSON
+python -m narrative --no-claude
+
+# ~$0.01 -- full run, no file written
+python -m narrative --dry-run
+
+# ~$0.01 -- full run, writes ~/Finance/reports/YYYY-MM.md
+python -m narrative

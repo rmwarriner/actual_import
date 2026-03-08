@@ -55,7 +55,7 @@ def resolve_path(p: str) -> Path:
     return Path(p).expanduser().resolve()
 
 
-def run(month: str, config: dict, dry_run: bool, no_actual: bool) -> None:
+def run(month: str, config: dict, dry_run: bool, no_actual: bool, no_claude: bool = False) -> None:
     journal    = resolve_path(config["hledger"]["journal"])
     output_dir = resolve_path(config["report"]["output_dir"])
 
@@ -110,6 +110,14 @@ def run(month: str, config: dict, dry_run: bool, no_actual: bool) -> None:
     # ── Assemble context ──────────────────────────────────────────────────────
     context = assemble_context(month, hledger_data, budget_data, config)
 
+    # -- No-Claude mode: dump context JSON and exit --
+    if no_claude:
+        import json
+        print("\n[--no-claude] Assembled context (no API call made):\n")
+        print(json.dumps(context, indent=2, default=str))
+        return
+
+
     # ── Call Claude ───────────────────────────────────────────────────────────
     print("  Calling Claude API...")
     narrative = call_claude(context)
@@ -155,6 +163,11 @@ def main() -> None:
         action="store_true",
         help="Skip Actual Budget API, use hledger data only",
     )
+    parser.add_argument(
+        "--no-claude",
+        action="store_true",
+        help="Skip Claude API call -- print assembled context JSON instead",
+    )
 
     args   = parser.parse_args()
     month  = args.month or prev_month()
@@ -173,6 +186,7 @@ def main() -> None:
             config=config,
             dry_run=args.dry_run,
             no_actual=args.no_actual,
+            no_claude=args.no_claude,
         )
     except KeyboardInterrupt:
         print("\nAborted.")
