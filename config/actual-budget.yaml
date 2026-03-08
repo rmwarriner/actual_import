@@ -163,6 +163,8 @@ skip_payees:
   - Discover Card
   - Savings Account
   - Spending Account
+  - Guild Mortgage
+  - Mohela
 
 # ---------------------------------------------------------------------------
 # Clearing accounts
