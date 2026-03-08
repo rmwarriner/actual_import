@@ -1,0 +1,43 @@
+# narrative.yaml
+# ==============
+# Configuration for the monthly financial narrative report.
+#
+# Run:
+#   python -m narrative                        # previous month (default)
+#   python -m narrative --month 2026-03        # specific month
+#   python -m narrative --dry-run              # print to stdout, no file written
+
+actual:
+  url: https://actual.warrinerhousehold.net
+  password: ""                                 # set via ACTUAL_PASSWORD env var or here
+  budget_file: 5240836a-81c2-463c-8ace-693db1cb6cff
+
+hledger:
+  journal: ~/Finance/hledger-ledger/main.journal
+
+report:
+  output_dir: ~/Finance/reports
+  # Set to true to also print report to stdout after writing
+  print_output: false
+
+# Budget targets used for context in the narrative.
+# These should reflect your Actual Budget envelope amounts.
+# Narrative will compare actuals against these and flag significant variances.
+targets:
+  savings_rate_pct: 10          # target % of net income saved
+  dining_weekly:    50.00       # $ per week
+  groceries_weekly: 230.00      # $ per week
+
+# Accounts that represent liquid assets for savings rate calculation
+liquid_assets:
+  - assets:checking:spending
+  - assets:savings:main
+  - assets:savings:education-fund
+
+# Households members -- used for context in the narrative
+household:
+  members:
+    - Robert
+    - Katie
+    - Walter
+  location: Beaumont, TX

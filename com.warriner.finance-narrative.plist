@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+    com.warriner.finance-narrative.plist
+    ====================================
+    Runs the monthly financial narrative on the 3rd of each month at 8am.
+    The 3rd gives time for all transactions to clear and for you to have
+    already done the Actual Budget import for the previous month.
+
+    Install:
+        cp com.warriner.finance-narrative.plist ~/Library/LaunchAgents/
+        launchctl load ~/Library/LaunchAgents/com.warriner.finance-narrative.plist
+
+    Run immediately (for testing):
+        launchctl start com.warriner.finance-narrative
+
+    Uninstall:
+        launchctl unload ~/Library/LaunchAgents/com.warriner.finance-narrative.plist
+        rm ~/Library/LaunchAgents/com.warriner.finance-narrative.plist
+
+    Logs:
+        tail -f /tmp/finance-narrative.log
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.warriner.finance-narrative</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <!-- Uses the venv python directly so no activation needed -->
+        <string>/Users/robert/Finance/hledger-import/.venv/bin/python</string>
+        <string>-m</string>
+        <string>narrative</string>
+    </array>
+
+    <!-- Run on the 3rd of every month at 8:00am -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Day</key>
+        <integer>3</integer>
+        <key>Hour</key>
+        <integer>8</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- Working directory -->
+    <key>WorkingDirectory</key>
+    <string>/Users/robert/Finance/hledger-import</string>
+
+    <!-- Environment variables -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>ACTUAL_PASSWORD</key>
+        <string>REPLACE_WITH_YOUR_ACTUAL_PASSWORD</string>
+        <key>ANTHROPIC_API_KEY</key>
+        <string>REPLACE_WITH_YOUR_ANTHROPIC_API_KEY</string>
+        <key>PATH</key>
+        <string>/Users/robert/Finance/hledger-import/.venv/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+
+    <!-- Log stdout and stderr -->
+    <key>StandardOutPath</key>
+    <string>/tmp/finance-narrative.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/finance-narrative-error.log</string>
+
+    <!-- Only run if logged in (not at 3am if Mac is asleep) -->
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>
